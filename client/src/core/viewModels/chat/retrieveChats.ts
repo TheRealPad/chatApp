@@ -2,13 +2,14 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { useService } from "@services/types/service.ts";
 import { getChats } from "@services/core/getChats.ts";
-import { AppDispatch } from "@/src/core/store.ts";
+import { AppDispatch, RootState } from "@/src/core/store.ts";
+import { Chat } from "@dto";
 
 interface ViewModel {
   isRequestPending: boolean;
   isRequestSuccess: boolean;
   isRequestFailure: boolean;
-  chats: string[];
+  chats: Chat[];
   retrieveChats(): void;
 }
 
@@ -18,15 +19,15 @@ function useChatsRetrieval(): ViewModel {
 
   return {
     isRequestFailure: useSelector(
-      (state: any) => state.chat.retrieveChats.request.isRequestFailure
+      (state: RootState) => state.chat.retrieveChats.request.isRequestFailure
     ),
     isRequestPending: useSelector(
-      (state: any) => state.chat.retrieveChats.request.isRequestPending
+      (state: RootState) => state.chat.retrieveChats.request.isRequestPending
     ),
     isRequestSuccess: useSelector(
-      (state: any) => state.chat.retrieveChats.request.isRequestSuccess
+      (state: RootState) => state.chat.retrieveChats.request.isRequestSuccess
     ),
-    chats: useSelector((state: any) => state.chat.retrieveChats.chats),
+    chats: useSelector((state: RootState) => state.chat.retrieveChats.chats),
     retrieveChats: () => dispatch(getChats({ apiClient: apiHttpClient })),
   };
 }

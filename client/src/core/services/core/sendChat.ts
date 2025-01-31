@@ -11,6 +11,7 @@ export const sendChat = createAsyncThunk(
     thunkAPI
   ): Promise<any> => {
     try {
+      console.log(apiClient);
       const data = await new Promise((resolve) => {
         setTimeout(() => {
           resolve(request.chat);

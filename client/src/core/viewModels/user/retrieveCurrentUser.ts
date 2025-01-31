@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 
 import { useService } from "@services/types/service.ts";
-import { AppDispatch } from "@/src/core/store.ts";
+import { AppDispatch, RootState } from "@/src/core/store.ts";
 import { Identifiable, User } from "@dto";
 import { retrieveCurrentUser } from "@services/core/retrieveCurrentUser.ts";
 
@@ -19,15 +19,20 @@ function useCurrentUserRetrieval(): ViewModel {
 
   return {
     isRequestFailure: useSelector(
-      (state: any) => state.user.retrieveCurrentUser.request.isRequestFailure
+      (state: RootState) =>
+        state.user.retrieveCurrentUser.request.isRequestFailure
     ),
     isRequestPending: useSelector(
-      (state: any) => state.user.retrieveCurrentUser.request.isRequestPending
+      (state: RootState) =>
+        state.user.retrieveCurrentUser.request.isRequestPending
     ),
     isRequestSuccess: useSelector(
-      (state: any) => state.user.retrieveCurrentUser.request.isRequestSuccess
+      (state: RootState) =>
+        state.user.retrieveCurrentUser.request.isRequestSuccess
     ),
-    user: useSelector((state: any) => state.user.retrieveCurrentUser.user),
+    user: useSelector(
+      (state: RootState) => state.user.retrieveCurrentUser.user
+    ),
     retrieveCurrentUser: () =>
       dispatch(retrieveCurrentUser({ apiClient: apiHttpClient })),
   };

@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 
-import { AppDispatch } from "@/src/core/store.ts";
+import { AppDispatch, RootState } from "@/src/core/store.ts";
 import { useService } from "@services/types/service.ts";
 import { register } from "@services/core/register.ts";
 import { RegisterRequest } from "@core/authentication/register/types.ts";
@@ -18,13 +18,16 @@ function useRegistration(): ViewModel {
 
   return {
     isRequestFailure: useSelector(
-      (state: any) => state.authentication.register.request.isRequestFailure
+      (state: RootState) =>
+        state.authentication.register.request.isRequestFailure
     ),
     isRequestPending: useSelector(
-      (state: any) => state.authentication.register.request.isRequestPending
+      (state: RootState) =>
+        state.authentication.register.request.isRequestPending
     ),
     isRequestSuccess: useSelector(
-      (state: any) => state.authentication.register.request.isRequestSuccess
+      (state: RootState) =>
+        state.authentication.register.request.isRequestSuccess
     ),
     register: (request) =>
       dispatch(register({ apiClient: apiHttpClient, request })),

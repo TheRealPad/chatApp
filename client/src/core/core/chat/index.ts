@@ -2,9 +2,8 @@ import { combineReducers } from "@reduxjs/toolkit";
 
 import retrieveChatsReducer from "./retrieveChats";
 import sendChatReducer from "./sendChat";
-import { ChatReducersMap } from "./types.ts";
 
-const chatReducer = combineReducers<ChatReducersMap>({
+const chatReducer = combineReducers({
   retrieveChats: retrieveChatsReducer,
   sendChat: sendChatReducer,
 });

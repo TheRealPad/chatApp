@@ -2,9 +2,8 @@ import { combineReducers } from "@reduxjs/toolkit";
 
 import loginReducer from "./login";
 import registerReducer from "./register";
-import { AuthenticationReducersMap } from "./types.ts";
 
-const authenticationReducer = combineReducers<AuthenticationReducersMap>({
+const authenticationReducer = combineReducers({
   login: loginReducer,
   register: registerReducer,
 });

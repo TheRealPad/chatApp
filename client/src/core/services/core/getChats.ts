@@ -7,6 +7,7 @@ export const getChats = createAsyncThunk(
   ChatUseCases.retrieveChats,
   async ({ apiClient }: { apiClient: HttpClient }, thunkAPI): Promise<any> => {
     try {
+      console.log(apiClient);
       const data = await new Promise((resolve) => {
         setTimeout(() => {
           resolve(["ok"]);
