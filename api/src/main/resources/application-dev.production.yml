@@ -1,0 +1,10 @@
+spring:
+  mvc:
+    servlet:
+      path: /api
+datasource:
+  url: jdbc:mysql://host.docker.internal:3307/documentManagement
+  username: root
+  password: YOURNEWPASSWORD
+  driver-class-name: com.mysql.cj.jdbc.Driver
+

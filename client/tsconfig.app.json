@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": false,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@app/*": ["./src/client/app/*"],
+      "@common/*": ["./src/client/common/*"],
+      "@component/*": ["./src/client/component/*"],
+      "@page/*": ["./src/client/page/*"],
+      "@scene/*": ["./src/client/scene/*"],
+      "@core/*": ["./src/core/core/*"],
+      "@services/*": ["./src/core/services/*"],
+      "@utils/*": ["./src/core/utils/*"],
+      "@dto": ["./src/core/dto/main.ts"],
+      "@viewModels": ["./src/core/viewModels/main.ts"]
+    }
+  },
+  "include": ["src"]
+}
