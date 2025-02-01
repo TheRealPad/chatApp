@@ -1,7 +1,7 @@
 import { Props } from "./types";
 import styles from "./styles.module.scss";
 
-function NotFound(_: Props) {
+function NotFoundPage(_: Props) {
   return (
     <div className={styles.notFound}>
       <p>not found</p>
@@ -9,4 +9,4 @@ function NotFound(_: Props) {
   );
 }
 
-export { NotFound };
+export { NotFoundPage };

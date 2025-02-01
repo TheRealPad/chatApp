@@ -5,15 +5,19 @@ import { DisconnectButton } from "@common/disconnectButton";
 import { Props } from "./types";
 import styles from "./styles.module.scss";
 import { useChatsRetrieval } from "@viewModels";
+import { useDispatch } from "react-redux";
+import { chatsSubscriber } from "@component/webSocket/subscribers.ts";
+import {
+  connectionPublisher,
+  disconnectionPublisher,
+  sendChatPublisher,
+} from "@component/webSocket/publishers.ts";
 
-function Chat(_: Props) {
+function Chat({ user }: Props) {
+  const dispatch = useDispatch();
   const { chats } = useChatsRetrieval();
   const [users, setUsers] = React.useState<string[]>([]);
-  const [messages, setMessages] = useState<
-    { sender: string; content: string; timestamp: number }[]
-  >([]);
   const [message, setMessage] = useState("");
-  const [username, setUsername] = useState("");
   const uniqueIdRef = React.useRef<string | null>(null);
   const stompClientRef = React.useRef<Client | null>(null);
 
@@ -23,22 +27,12 @@ function Chat(_: Props) {
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("Connected to WebSocket");
-        uniqueIdRef.current = `ReactUser_${Math.random()
-          .toString(36)
-          .substring(7)}`;
+        uniqueIdRef.current = `${user.name}`;
         stompClient.subscribe("/topic/users", (message) => {
           setUsers(JSON.parse(message.body));
         });
-        stompClient.subscribe("/topic/messages", (message) => {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            JSON.parse(message.body),
-          ]);
-        });
-        stompClient.publish({
-          destination: "/app/connect",
-          body: JSON.stringify(uniqueIdRef.current),
-        });
+        chatsSubscriber(stompClient, dispatch);
+        connectionPublisher(stompClient, uniqueIdRef.current);
       },
     });
 
@@ -48,10 +42,7 @@ function Chat(_: Props) {
     const handleUnload = () => {
       console.log("Unload client");
       if (uniqueIdRef.current) {
-        stompClient.publish({
-          destination: "/app/disconnect",
-          body: JSON.stringify(uniqueIdRef.current),
-        });
+        disconnectionPublisher(stompClient, uniqueIdRef.current);
       }
       stompClient.deactivate();
     };
@@ -69,18 +60,15 @@ function Chat(_: Props) {
     if (
       stompClientRef.current &&
       message.trim() !== "" &&
-      username.trim() !== ""
+      user.name.trim() !== ""
     ) {
       const chatMessage = {
-        sender: username,
+        sender: user.name,
         content: message,
         timestamp: new Date().getTime(),
       };
 
-      stompClientRef.current.publish({
-        destination: "/app/chat",
-        body: JSON.stringify(chatMessage),
-      });
+      sendChatPublisher(stompClientRef.current, chatMessage);
 
       setMessage("");
     }
@@ -96,12 +84,7 @@ function Chat(_: Props) {
           <li key={index}>{user}</li>
         ))}
       </ul>
-      <input
-        type="text"
-        placeholder="Enter your name"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
+      <input type="text" placeholder="Enter your name" value={user.name} />
       <input
         type="text"
         placeholder="Type a message"
@@ -110,12 +93,11 @@ function Chat(_: Props) {
       />
       <button onClick={sendMessage}>Send</button>
       <h2>Chat Messages</h2>
-      <h4>{chats.length}</h4>
       <ul>
-        {messages.map((msg, index) => (
+        {chats.map((chat, index) => (
           <li key={index}>
-            <strong>{msg.sender}</strong>: {msg.content}{" "}
-            <i>({new Date(msg.timestamp).toLocaleTimeString()})</i>
+            <strong>{chat.sender}</strong>: {chat.content}{" "}
+            <i>({new Date(chat.timestamp).toLocaleTimeString()})</i>
           </li>
         ))}
       </ul>

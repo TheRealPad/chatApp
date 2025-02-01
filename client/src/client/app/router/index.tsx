@@ -5,10 +5,10 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import { Home } from "@page/home";
-import { About } from "@page/about";
-import { Chat } from "@page/chat";
-import { NotFound } from "@page/notFound";
+import { HomePage } from "src/client/page/homePage";
+import { AboutPage } from "src/client/page/aboutPage";
+import { ChatPage } from "src/client/page/chatPage";
+import { NotFoundPage } from "src/client/page/notFoundPage";
 import { retrieveAccessToken } from "@utils/token.ts";
 
 const PublicRoute = ({ element }: { element: JSX.Element }) => {
@@ -32,16 +32,22 @@ const AppRouter = () => {
             isAuthenticated ? (
               <Navigate to="/chat" replace />
             ) : (
-              <PublicRoute element={<Home />} />
+              <PublicRoute element={<HomePage />} />
             )
           }
         />
-        <Route path="/about" element={<PublicRoute element={<About />} />} />
+        <Route
+          path="/about"
+          element={<PublicRoute element={<AboutPage />} />}
+        />
 
-        <Route path="/chat" element={<PrivateRoute element={<Chat />} />} />
-        <Route path="/private" element={<PrivateRoute element={<About />} />} />
+        <Route path="/chat" element={<PrivateRoute element={<ChatPage />} />} />
+        <Route
+          path="/private"
+          element={<PrivateRoute element={<AboutPage />} />}
+        />
 
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );

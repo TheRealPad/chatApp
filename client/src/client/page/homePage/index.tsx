@@ -5,7 +5,7 @@ import styles from "./styles.module.scss";
 import { useLogin, useRegistration } from "@viewModels";
 import { useNavigate } from "react-router-dom";
 
-function Home(_: Props) {
+function HomePage(_: Props) {
   const [username, setUsername] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const navigate = useNavigate();
@@ -47,4 +47,4 @@ function Home(_: Props) {
   );
 }
 
-export { Home };
+export { HomePage };
