@@ -1,4 +1,5 @@
 ![CI/CD Pipeline](https://github.com/TheRealPad/chatApp/actions/workflows/ci.yml/badge.svg)
+
 ![react](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![redux](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white)
 ![websocket](https://img.shields.io/badge/Socket.io-010101?&style=for-the-badge&logo=Socket.io&logoColor=white)

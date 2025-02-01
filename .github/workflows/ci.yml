@@ -1,4 +1,4 @@
-name: CI/CD Pipeline Simulation
+name: CI/CD Pipeline
 
 on:
   push:
