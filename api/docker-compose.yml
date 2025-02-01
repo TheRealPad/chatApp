@@ -1,9 +1,25 @@
 version: '3.8'
 
 services:
+  db:
+    image: mysql:latest
+    container_name: chatApp_db
+    environment:
+      MYSQL_ROOT_PASSWORD: YOURNEWPASSWORD
+      MYSQL_DATABASE: chatApp
+    ports:
+      - "3307:3306"
+    networks:
+      - back-net
   app:
     build: .
     ports:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=dev.production
+    depends_on:
+      - db
+
+networks:
+  back-net:
+    driver: bridge

@@ -1,0 +1,65 @@
+name: CI/CD Pipeline Simulation
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Simulate CI stage
+        run: |
+          echo "Running static analysis..."
+          sleep 2
+          echo "Linting completed successfully!"
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: ci
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Simulate testing
+        run: |
+          echo "Running unit tests..."
+          sleep 2
+          echo "All tests passed!"
+
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Simulate build
+        run: |
+          echo "Building application..."
+          sleep 3
+          echo "Build successful!"
+
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Simulate deployment
+        run: |
+          echo "Deploying application..."
+          sleep 3
+          echo "Deployment successful!"

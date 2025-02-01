@@ -5,6 +5,10 @@ services:
       context: ../..
       dockerfile: ./Dockerfile
     container_name: todolist-client
+    environment:
+      - VITE_PORT=3000
+      - VITE_API_URL=http://host.docker.internal:8080/api
+      - VITE_WEB_SOCKET_URL=ws://localhost:8080/api/ws
     ports:
       - "3000:3000"
     restart: always

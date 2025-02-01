@@ -19,7 +19,7 @@ function Chat(_: Props) {
 
   React.useEffect(() => {
     const stompClient = new Client({
-      brokerURL: import.meta.env.VITE_API_URL.replace("http", "ws") + "/ws",
+      brokerURL: import.meta.env.VITE_WEB_SOCKET_URL,
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("Connected to WebSocket");
