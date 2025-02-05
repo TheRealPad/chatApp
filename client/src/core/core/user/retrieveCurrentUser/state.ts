@@ -18,7 +18,7 @@ function retrieveCurrentUserStateHandler() {
           state.request.isRequestPending = false;
           state.request.isRequestFailure = false;
           state.request.isRequestSuccess = true;
-          state.user = { ...payload };
+          state.user = { ...payload, isConnected: false };
         }
       )
       .addCase(retrieveCurrentUser.rejected, (state) => {

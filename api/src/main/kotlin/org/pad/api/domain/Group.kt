@@ -1,4 +1,4 @@
-package org.pad.api.domain.auth
+package org.pad.api.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.swagger.v3.oas.annotations.Hidden
@@ -6,24 +6,26 @@ import jakarta.persistence.*
 import lombok.Builder
 import lombok.Getter
 import lombok.Setter
-import org.pad.api.domain.enums.Role
+import org.pad.api.domain.auth.User
 import org.pad.api.domain.structural.Instantiable
 
 @Entity
 @Getter
 @Setter
-class User : Instantiable() {
+class Group : Instantiable() {
 
-    var username: String? = null
+    var name: String? = null
 
-    var password: String? = null
+    var description: String? = null
 
-    @Enumerated(EnumType.STRING)
-    var role: Role = Role.USER
+    var isPersonal: Boolean? = null
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    var sender: User? = null
 
     @Builder.Default
     @Hidden
     @ManyToMany(targetEntity = User::class, fetch = FetchType.LAZY)
     @JsonIgnore
-    var friends: MutableList<User> = mutableListOf()
+    var members: MutableList<User> = mutableListOf()
 }

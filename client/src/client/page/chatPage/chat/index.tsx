@@ -4,9 +4,16 @@ import { Client } from "@stomp/stompjs";
 import { DisconnectButton } from "@common/disconnectButton";
 import { Props } from "./types";
 import styles from "./styles.module.scss";
-import { useChatsRetrieval } from "@viewModels";
+import {
+  useAddFriend,
+  useChatsRetrieval,
+  useUsersRetrieval,
+} from "@viewModels";
 import { useDispatch } from "react-redux";
-import { chatsSubscriber } from "@component/webSocket/subscribers.ts";
+import {
+  chatsSubscriber,
+  usersSubscriber,
+} from "@component/webSocket/subscribers.ts";
 import {
   connectionPublisher,
   disconnectionPublisher,
@@ -16,10 +23,24 @@ import {
 function Chat({ user }: Props) {
   const dispatch = useDispatch();
   const { chats } = useChatsRetrieval();
-  const [users, setUsers] = React.useState<string[]>([]);
+  const { addFriend } = useAddFriend();
+  const {
+    retrieveUsers,
+    users,
+    isRequestSuccess,
+    isRequestFailure,
+    isRequestPending,
+  } = useUsersRetrieval();
   const [message, setMessage] = useState("");
   const uniqueIdRef = React.useRef<string | null>(null);
   const stompClientRef = React.useRef<Client | null>(null);
+
+  React.useEffect(() => {
+    !isRequestFailure &&
+      !isRequestPending &&
+      !isRequestSuccess &&
+      retrieveUsers();
+  }, []);
 
   React.useEffect(() => {
     const stompClient = new Client({
@@ -27,10 +48,8 @@ function Chat({ user }: Props) {
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("Connected to WebSocket");
-        uniqueIdRef.current = `${user.name}`;
-        stompClient.subscribe("/topic/users", (message) => {
-          setUsers(JSON.parse(message.body));
-        });
+        uniqueIdRef.current = user.uuid;
+        usersSubscriber(stompClient, dispatch);
         chatsSubscriber(stompClient, dispatch);
         connectionPublisher(stompClient, uniqueIdRef.current);
       },
@@ -78,10 +97,18 @@ function Chat({ user }: Props) {
     <div className={styles.home}>
       <p>chat page</p>
       <DisconnectButton />
-      <h2>Connected Users</h2>
+      <h2>Users</h2>
       <ul>
-        {users.map((user, index) => (
-          <li key={index}>{user}</li>
+        {users.map((u, index) => (
+          <li key={index}>
+            {u.name}{" "}
+            {u.isConnected || u.uuid === user.uuid
+              ? "(connected)"
+              : "(not connected)"}
+            {user.uuid !== u.uuid && (
+              <button onClick={() => addFriend({ friend: u })}>add</button>
+            )}
+          </li>
         ))}
       </ul>
       <input type="text" placeholder="Enter your name" value={user.name} />

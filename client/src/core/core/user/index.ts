@@ -1,10 +1,11 @@
 import { combineReducers } from "@reduxjs/toolkit";
 
 import retrieveCurrentUserReducer from "./retrieveCurrentUser";
-import { UserReducersMap } from "./types.ts";
+import retrieveUsersReducer from "./retrieveUsers";
 
-const userReducer = combineReducers<UserReducersMap>({
+const userReducer = combineReducers({
   retrieveCurrentUser: retrieveCurrentUserReducer,
+  retrieveUsers: retrieveUsersReducer,
 });
 
 export { userReducer };

@@ -1,39 +1,42 @@
 package org.pad.api.controller
 
-import org.springframework.context.event.EventListener
+import org.pad.api.domain.auth.User
+import org.pad.api.repository.auth.UserRepository
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.messaging.simp.annotation.SubscribeMapping
-import org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor
-import org.springframework.messaging.support.GenericMessage
 import org.springframework.stereotype.Controller
-import org.springframework.web.socket.messaging.SessionDisconnectEvent
+import java.util.*
 
 @Controller
-class WebSocketController {
+class WebSocketController(private val userRepository: UserRepository) {
 
-    private val connectedUsers = mutableSetOf<String>()
+    private val connectedUsers = mutableSetOf<User>()
 
     @SubscribeMapping("/topic/users")
-    fun getConnectedUsers(): Set<String> {
+    fun getConnectedUsers(): Set<User> {
         return connectedUsers
     }
 
     @MessageMapping("/connect")
     @SendTo("/topic/users")
-    fun connect(username: String, headerAccessor: SimpMessageHeaderAccessor): Set<String> {
+    fun connect(user: String, headerAccessor: SimpMessageHeaderAccessor): Set<User> {
         val sessionId = headerAccessor.sessionId ?: return connectedUsers
-        connectedUsers.add("$username-$sessionId")
+        println(userRepository.findById(UUID.fromString(user.trim('"'))).get())
+        val u = userRepository.findById(UUID.fromString(user.trim('"')))
+        if (u.isEmpty) {
+            return connectedUsers
+        }
+        connectedUsers.add(u.get())
         return connectedUsers
     }
 
     @MessageMapping("/disconnect")
     @SendTo("/topic/users")
-    fun disconnect(username: String, headerAccessor: SimpMessageHeaderAccessor): Set<String> {
+    fun disconnect(user: String, headerAccessor: SimpMessageHeaderAccessor): Set<User> {
         val sessionId = headerAccessor.sessionId ?: return connectedUsers
-        connectedUsers.remove(connectedUsers.find { it.endsWith(sessionId) })
+        connectedUsers.remove(connectedUsers.find { it.uuid.equals(UUID.fromString(user.trim('"'))) })
         return connectedUsers
     }
 
