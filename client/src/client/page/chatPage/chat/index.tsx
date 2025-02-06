@@ -49,6 +49,10 @@ function Chat({ user }: Props) {
       onConnect: () => {
         console.log("Connected to WebSocket");
         uniqueIdRef.current = user.uuid;
+        stompClient.subscribe(`/user/queue/private`, (message) => {
+          console.log("Received message", message);
+          alert(`Private Message: ${message.body}`);
+        });
         usersSubscriber(stompClient, dispatch);
         chatsSubscriber(stompClient, dispatch);
         connectionPublisher(stompClient, uniqueIdRef.current);

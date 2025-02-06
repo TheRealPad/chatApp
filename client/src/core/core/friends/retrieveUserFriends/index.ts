@@ -15,7 +15,8 @@ export const sendChatSlice = createSlice({
     ) => {
       state.friends = state.friends.map((friend) => ({
         ...friend,
-        isConnected: !!action.payload.find((u) => u.uuid === friend.uuid),
+        isConnected:
+          action.payload.find((u) => u.uuid === friend.uuid) != undefined,
       }));
     },
   },
