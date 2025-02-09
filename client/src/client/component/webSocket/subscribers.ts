@@ -3,7 +3,12 @@ import { Client } from "@stomp/stompjs";
 import { Dispatch } from "react";
 import { UnknownAction } from "@reduxjs/toolkit";
 import { getConnectedUsers } from "@core/user/retrieveUsers";
-import { getConnectedFriends } from "@core/friends/retrieveUserFriends";
+import {
+  getConnectedFriends,
+  addFriend,
+  removeFriend,
+} from "@core/friends/retrieveUserFriends";
+import { Identifiable, User } from "@dto";
 
 function chatsSubscriber(
   stompClient: Client,
@@ -40,4 +45,41 @@ function usersSubscriber(
   });
 }
 
-export { chatsSubscriber, usersSubscriber };
+function subscribeSubscriber(
+  stompClient: Client,
+  dispatch: Dispatch<UnknownAction>
+) {
+  stompClient.subscribe(`/user/queue/subscribe`, (message) => {
+    const jsonUser = JSON.parse(message.body);
+    const user: Identifiable<User> = {
+      name: jsonUser.username,
+      role: jsonUser.role,
+      uuid: jsonUser.uuid,
+      isConnected: true,
+    };
+    dispatch(addFriend(user));
+  });
+}
+
+function unsubscribeSubscriber(
+  stompClient: Client,
+  dispatch: Dispatch<UnknownAction>
+) {
+  stompClient.subscribe(`/user/queue/unsubscribe`, (message) => {
+    const jsonUser = JSON.parse(message.body);
+    const user: Identifiable<User> = {
+      name: jsonUser.username,
+      role: jsonUser.role,
+      uuid: jsonUser.uuid,
+      isConnected: true,
+    };
+    dispatch(removeFriend(user));
+  });
+}
+
+export {
+  chatsSubscriber,
+  usersSubscriber,
+  subscribeSubscriber,
+  unsubscribeSubscriber,
+};

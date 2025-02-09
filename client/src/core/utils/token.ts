@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 const ACCESS_TOKEN_KEY = "access_token";
 
 function storeAccessToken(token: string) {
-  Cookies.set(ACCESS_TOKEN_KEY, token, { expires: 1 });
+  Cookies.set(ACCESS_TOKEN_KEY, token, { expires: 0.5 });
 }
 
 function retrieveAccessToken() {

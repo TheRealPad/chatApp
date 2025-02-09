@@ -1,6 +1,8 @@
 package org.pad.api.domain.auth
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.swagger.v3.oas.annotations.Hidden
 import jakarta.persistence.*
 import lombok.Builder
@@ -16,6 +18,7 @@ class User : Instantiable() {
 
     var username: String? = null
 
+    @JsonIgnore
     var password: String? = null
 
     @Enumerated(EnumType.STRING)
@@ -26,4 +29,9 @@ class User : Instantiable() {
     @ManyToMany(targetEntity = User::class, fetch = FetchType.LAZY)
     @JsonIgnore
     var friends: MutableList<User> = mutableListOf()
+
+    fun toJson(): String {
+        val mapper: ObjectMapper = jacksonObjectMapper()
+        return mapper.writeValueAsString(this)
+    }
 }

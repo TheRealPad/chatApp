@@ -1,3 +1,23 @@
-.home {
+.chat {
+  height: 100%;
+  width: 100%;
+}
 
+.loader {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  width: calc(100% - 2rem);
+}
+
+.content {
+  height: 100%;
 }

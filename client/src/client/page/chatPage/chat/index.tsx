@@ -1,17 +1,12 @@
 import React, { useState } from "react";
 import { Client } from "@stomp/stompjs";
-
-import { DisconnectButton } from "@common/disconnectButton";
-import { Props } from "./types";
-import styles from "./styles.module.scss";
-import {
-  useAddFriend,
-  useChatsRetrieval,
-  useUsersRetrieval,
-} from "@viewModels";
 import { useDispatch } from "react-redux";
+
+import { useChatsRetrieval } from "@viewModels";
 import {
   chatsSubscriber,
+  subscribeSubscriber,
+  unsubscribeSubscriber,
   usersSubscriber,
 } from "@component/webSocket/subscribers.ts";
 import {
@@ -19,28 +14,15 @@ import {
   disconnectionPublisher,
   sendChatPublisher,
 } from "@component/webSocket/publishers.ts";
+import { Props } from "./types";
+import styles from "./styles.module.scss";
 
 function Chat({ user }: Props) {
   const dispatch = useDispatch();
   const { chats } = useChatsRetrieval();
-  const { addFriend } = useAddFriend();
-  const {
-    retrieveUsers,
-    users,
-    isRequestSuccess,
-    isRequestFailure,
-    isRequestPending,
-  } = useUsersRetrieval();
   const [message, setMessage] = useState("");
   const uniqueIdRef = React.useRef<string | null>(null);
   const stompClientRef = React.useRef<Client | null>(null);
-
-  React.useEffect(() => {
-    !isRequestFailure &&
-      !isRequestPending &&
-      !isRequestSuccess &&
-      retrieveUsers();
-  }, []);
 
   React.useEffect(() => {
     const stompClient = new Client({
@@ -49,10 +31,8 @@ function Chat({ user }: Props) {
       onConnect: () => {
         console.log("Connected to WebSocket");
         uniqueIdRef.current = user.uuid;
-        stompClient.subscribe(`/user/queue/private`, (message) => {
-          console.log("Received message", message);
-          alert(`Private Message: ${message.body}`);
-        });
+        subscribeSubscriber(stompClient, dispatch);
+        unsubscribeSubscriber(stompClient, dispatch);
         usersSubscriber(stompClient, dispatch);
         chatsSubscriber(stompClient, dispatch);
         connectionPublisher(stompClient, uniqueIdRef.current);
@@ -98,40 +78,42 @@ function Chat({ user }: Props) {
   };
 
   return (
-    <div className={styles.home}>
-      <p>chat page</p>
-      <DisconnectButton />
-      <h2>Users</h2>
-      <ul>
-        {users.map((u, index) => (
-          <li key={index}>
-            {u.name}{" "}
-            {u.isConnected || u.uuid === user.uuid
-              ? "(connected)"
-              : "(not connected)"}
-            {user.uuid !== u.uuid && (
-              <button onClick={() => addFriend({ friend: u })}>add</button>
-            )}
-          </li>
-        ))}
-      </ul>
-      <input type="text" placeholder="Enter your name" value={user.name} />
-      <input
-        type="text"
-        placeholder="Type a message"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button onClick={sendMessage}>Send</button>
-      <h2>Chat Messages</h2>
-      <ul>
-        {chats.map((chat, index) => (
-          <li key={index}>
-            <strong>{chat.sender}</strong>: {chat.content}{" "}
-            <i>({new Date(chat.timestamp).toLocaleTimeString()})</i>
-          </li>
-        ))}
-      </ul>
+    <div className={styles.chat}>
+      <div className={styles.leftBox}>
+        <p>Display the conversations with groups and users</p>
+      </div>
+      <div className={styles.rightBox}>
+        <div className={styles.chats}>
+          {chats.map((chat, index) => (
+            <div key={index}>
+              <strong>{chat.sender}</strong>: {chat.content}{" "}
+              <i>({new Date(chat.timestamp).toLocaleTimeString()})</i>
+            </div>
+          ))}
+        </div>
+        <form
+          className={styles.textInput}
+          onSubmit={(e) => {
+            sendMessage();
+            e.preventDefault();
+            e.preventDefault();
+          }}
+        >
+          <p>
+            {user.name} {">"}
+          </p>
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="Type a message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button type={"submit"} onClick={sendMessage}>
+            Send
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

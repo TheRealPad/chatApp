@@ -19,10 +19,19 @@ export const sendChatSlice = createSlice({
           action.payload.find((u) => u.uuid === friend.uuid) != undefined,
       }));
     },
+    addFriend: (state, action: PayloadAction<Identifiable<User>>) => {
+      state.friends = [...state.friends, action.payload];
+    },
+    removeFriend: (state, action: PayloadAction<Identifiable<User>>) => {
+      state.friends = state.friends.filter(
+        (f) => f.uuid !== action.payload.uuid
+      );
+    },
   },
   extraReducers: retrieveUserFriendsStateHandler(),
 });
 
-export const { getConnectedFriends } = sendChatSlice.actions;
+export const { getConnectedFriends, addFriend, removeFriend } =
+  sendChatSlice.actions;
 
 export default sendChatSlice.reducer;

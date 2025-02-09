@@ -10,13 +10,11 @@ import org.springframework.web.server.ResponseStatusException
 import java.util.UUID
 
 @Service
-class UserService {
-
-    @Autowired
-    private lateinit var userContext: UserContext
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
+class UserService(
+    private val userContext: UserContext,
+    private val userRepository: UserRepository,
+    private val webSocketService: WebSocketService
+) {
 
     fun addFriend(id: UUID): MutableList<User> {
         val user = userContext.getCurrentUser() ?: return mutableListOf()
@@ -31,6 +29,7 @@ class UserService {
         friend.get().friends.add(user);
         userRepository.save(user)
         userRepository.save(friend.get())
+        webSocketService.notifyUser(friend.get(), "/queue/subscribe", user.toJson())
         return user.friends
     }
 
@@ -47,6 +46,7 @@ class UserService {
         friend.get().friends.remove(user)
         userRepository.save(user)
         userRepository.save(friend.get())
+        webSocketService.notifyUser(friend.get(), "/queue/unsubscribe", user.toJson())
         return user.friends
     }
 }

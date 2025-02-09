@@ -10,10 +10,10 @@ export const retrieveUserSlice = createSlice({
   initialState,
   reducers: {
     getConnectedUsers: (state, action: PayloadAction<Identifiable<User>[]>) => {
+      console.log("ok");
       state.users = state.users.map((user) => ({
         ...user,
-        isConnected:
-          action.payload.find((u) => u.uuid === user.uuid) !== undefined,
+        isConnected: !!action.payload.find((u) => u.uuid === user.uuid),
       }));
     },
   },
