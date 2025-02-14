@@ -1,16 +1,12 @@
 package org.pad.api.controller
 
 import org.pad.api.domain.auth.User
-import org.pad.api.repository.auth.UserRepository
 import org.pad.api.service.WebSocketService
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
-import org.springframework.messaging.simp.SimpMessageType
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.stereotype.Controller
-import java.util.*
 
 
 @Controller

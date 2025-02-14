@@ -3,8 +3,8 @@ package org.pad.api.event
 import lombok.RequiredArgsConstructor
 import lombok.extern.slf4j.Slf4j
 import org.pad.api.domain.Group
-import org.springframework.data.rest.core.annotation.HandleAfterCreate
-import org.springframework.data.rest.core.annotation.HandleBeforeCreate
+import org.pad.api.repository.ChatRepository
+import org.springframework.data.rest.core.annotation.HandleBeforeDelete
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler
 import org.springframework.stereotype.Service
 
@@ -12,15 +12,11 @@ import org.springframework.stereotype.Service
 @Service
 @RepositoryEventHandler
 @RequiredArgsConstructor
-class GroupEvent {
+class GroupEvent(private val chatRepository: ChatRepository) {
 
-    @HandleBeforeCreate
-    fun handleBeforeCreate(group: Group) {
-        println("Handle Before Create")
-    }
-
-    @HandleAfterCreate
-    fun handleAfterCreate(group: Group) {
-        println("Handle After Create")
+    @HandleBeforeDelete
+    fun handleBeforeDelete(group: Group) {
+        val chats = chatRepository.findByGroupOrderByCreatedDateDesc(group)
+        chatRepository.deleteAll(chats)
     }
 }

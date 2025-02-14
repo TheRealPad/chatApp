@@ -1,6 +1,8 @@
 package org.pad.api.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.swagger.v3.oas.annotations.Hidden
 import jakarta.persistence.*
 import lombok.Builder
@@ -18,14 +20,16 @@ class Group : Instantiable() {
 
     var description: String? = null
 
-    var isPersonal: Boolean? = null
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    var sender: User? = null
+    var isPersonal: Boolean = false
 
     @Builder.Default
     @Hidden
     @ManyToMany(targetEntity = User::class, fetch = FetchType.LAZY)
     @JsonIgnore
     var members: MutableList<User> = mutableListOf()
+
+    fun toJson(): String {
+        val mapper: ObjectMapper = jacksonObjectMapper()
+        return mapper.writeValueAsString(this)
+    }
 }
