@@ -1,11 +1,12 @@
 import { useState } from "react";
 
-import { useChatsRetrieval } from "@viewModels";
+import { useChatsRetrieval, useGroupRemoval } from "@viewModels";
 import { Props } from "./types";
 import styles from "./styles.module.scss";
 
 function Conversation({ user, selectedGroup, sendMessage }: Props) {
   const { chats } = useChatsRetrieval();
+  const { deleteGroup } = useGroupRemoval();
   const [message, setMessage] = useState("");
   const groupName = !selectedGroup
     ? ""
@@ -20,7 +21,9 @@ function Conversation({ user, selectedGroup, sendMessage }: Props) {
         <h2>{selectedGroup ? groupName : "No group selected"}</h2>
         {selectedGroup && (
           <div>
-            <button onClick={() => alert("delete group")}>delete</button>
+            <button onClick={() => deleteGroup({ group: selectedGroup })}>
+              delete
+            </button>
           </div>
         )}
       </div>

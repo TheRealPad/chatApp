@@ -1,8 +1,10 @@
 import { ActionReducerMapBuilder } from "@reduxjs/toolkit";
+import { current } from "immer";
 
 import { getGroups } from "@services/core/getGroups.ts";
 import { RetrieveGroupsState } from "./types.ts";
 import { getPersonalGroup } from "@services/core/getPersonalGroup.ts";
+import { deleteGroup } from "@services/core/deleteGroup.ts";
 
 function retrieveGroupsStateHandler() {
   return (builder: ActionReducerMapBuilder<RetrieveGroupsState>) => {
@@ -31,8 +33,18 @@ function retrieveGroupsStateHandler() {
         state.request.isRequestFailure = true;
         state.request.isRequestSuccess = false;
       })
+      .addCase(deleteGroup.fulfilled, (state, { payload }) => {
+        state.groups = current(state.groups).filter(
+          (group) => group.uuid !== payload.uuid
+        );
+      })
       .addCase(getPersonalGroup.fulfilled, (state, { payload }) => {
-        state.groups = [...state.groups, { ...payload }];
+        const isGroupPresent = !!current(state.groups).find(
+          (group) => group.uuid === payload.uuid
+        );
+        if (!isGroupPresent) {
+          state.groups = [...state.groups, { ...payload }];
+        }
       });
   };
 }

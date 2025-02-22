@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import {
   addToGroupSubscriber,
   chatsSubscriber,
+  groupDeletionSubscriber,
   subscribeSubscriber,
   unsubscribeSubscriber,
   usersSubscriber,
@@ -35,6 +36,7 @@ function Chat({ user, selectedGroup, setSelectedGroup }: Props) {
         unsubscribeSubscriber(stompClient, dispatch);
         usersSubscriber(stompClient, dispatch);
         chatsSubscriber(stompClient, dispatch);
+        groupDeletionSubscriber(stompClient, dispatch);
         addToGroupSubscriber(stompClient, dispatch);
         connectionPublisher(stompClient, uniqueIdRef.current);
       },

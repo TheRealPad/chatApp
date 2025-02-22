@@ -9,7 +9,7 @@ import {
   removeFriend,
 } from "@core/friends/retrieveUserFriends";
 import { Group, Identifiable, User } from "@dto";
-import { addNewGroup } from "@core/groups/retrieveGroups";
+import { addNewGroup, deleteGroup } from "@core/groups/retrieveGroups";
 
 function chatsSubscriber(
   stompClient: Client,
@@ -95,10 +95,28 @@ function addToGroupSubscriber(
   });
 }
 
+function groupDeletionSubscriber(
+  stompClient: Client,
+  dispatch: Dispatch<UnknownAction>
+) {
+  stompClient.subscribe(`/user/queue/private/groupDeletion`, (message) => {
+    const jsonGroup = JSON.parse(message.body);
+    const group: Identifiable<Group> = {
+      name: jsonGroup.name,
+      description: jsonGroup.description,
+      uuid: jsonGroup.uuid,
+      isPersonal: jsonGroup.isPersonal,
+      members: jsonGroup.members,
+    };
+    dispatch(deleteGroup(group));
+  });
+}
+
 export {
   chatsSubscriber,
   usersSubscriber,
   subscribeSubscriber,
   unsubscribeSubscriber,
   addToGroupSubscriber,
+  groupDeletionSubscriber,
 };

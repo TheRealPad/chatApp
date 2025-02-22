@@ -13,3 +13,4 @@ export * from "./friends/retrieveUserFriends";
 
 export * from "./groups/retrieveGroups";
 export * from "./groups/retrievePersonalGroup";
+export * from "./groups/deleteGroup";
