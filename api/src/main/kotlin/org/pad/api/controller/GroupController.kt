@@ -2,6 +2,7 @@ package org.pad.api.controller
 
 import org.pad.api.domain.Group
 import org.pad.api.domain.auth.User
+import org.pad.api.domain.dto.GroupDto
 import org.pad.api.domain.dto.PersonalGroupDto
 import org.pad.api.service.GroupService
 import org.springframework.stereotype.Controller
@@ -36,8 +37,7 @@ class GroupController(private val groupService: GroupService) {
 
     @PostMapping("/groups/personal")
     @ResponseBody
-    fun getPersonalConversation(@RequestBody body: PersonalGroupDto): Group {
-        // créer un group si existe pas, groupe personel avec les 2 users
+    fun getPersonalConversation(@RequestBody body: PersonalGroupDto): GroupDto {
         return groupService.getPersonalConversation(UUID.fromString(body.user1), UUID.fromString(body.user2))
     }
 

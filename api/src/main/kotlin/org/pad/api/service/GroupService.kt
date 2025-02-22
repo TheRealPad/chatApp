@@ -2,6 +2,8 @@ package org.pad.api.service
 
 import org.pad.api.domain.Group
 import org.pad.api.domain.auth.User
+import org.pad.api.domain.dto.GroupDto
+import org.pad.api.domain.dto.auth.UserDto
 import org.pad.api.repository.GroupRepository
 import org.pad.api.repository.auth.UserRepository
 import org.pad.api.service.auth.UserContext
@@ -55,12 +57,21 @@ class GroupService(
         return groupRepository.findByUser(user)
     }
 
-    fun getPersonalConversation(userId1: UUID, userId2: UUID): Group {
+    fun getPersonalConversation(userId1: UUID, userId2: UUID): GroupDto {
         val user1 = userRepository.findById(userId1).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "User1 not found") }
         val user2 = userRepository.findById(userId2).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "User2 not found") }
         val optionalGroup = groupRepository.findPersonalGroupWithTwoMembers(user1, user2)
         if (optionalGroup.isPresent) {
-            return optionalGroup.get()
+            return GroupDto(
+                optionalGroup.get().uuid,
+                optionalGroup.get().name.toString(),
+                optionalGroup.get().description.toString(),
+                true,
+                mutableListOf(
+                    UserDto(user1.username.toString(), user1.role, user1.uuid),
+                    UserDto(user2.username.toString(), user2.role, user2.uuid)
+                )
+            )
         }
         val newGroup = Group()
         newGroup.isPersonal = true
@@ -68,7 +79,19 @@ class GroupService(
         newGroup.description = "Private conversation"
         newGroup.members.add(user1)
         newGroup.members.add(user2)
-        return groupRepository.save(newGroup)
+        val group = groupRepository.save(newGroup)
+        val groupDto = GroupDto(
+            group.uuid,
+            group.name.toString(),
+            group.description.toString(),
+            true,
+            mutableListOf(
+                UserDto(user1.username.toString(), user1.role, user1.uuid),
+                UserDto(user2.username.toString(), user2.role, user2.uuid)
+            )
+        )
+        webSocketService.notifyUser(user2, "/queue/private/addToGroup", groupDto.toJson())
+        return groupDto
     }
 
 }

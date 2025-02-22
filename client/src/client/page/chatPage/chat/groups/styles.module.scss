@@ -1,0 +1,33 @@
+.groups {
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+
+  & > :not(:last-child) {
+    border-bottom: 0.5px solid black;
+  }
+}
+
+.group {
+  padding-left: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(211, 211, 211, 0.2);
+    transition: background-color 0.3s;
+  }
+}
+
+.notPersonal {
+  cursor: not-allowed;
+}
+
+.selected {
+  color: red;
+}
+
+.tile {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

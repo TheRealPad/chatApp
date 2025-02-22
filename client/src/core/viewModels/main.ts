@@ -10,3 +10,6 @@ export * from "./user/retrieveUsers";
 export * from "./friends/addFriend";
 export * from "./friends/removeFriend";
 export * from "./friends/retrieveUserFriends";
+
+export * from "./groups/retrieveGroups";
+export * from "./groups/retrievePersonalGroup";

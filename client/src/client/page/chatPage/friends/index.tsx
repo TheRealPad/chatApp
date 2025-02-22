@@ -2,6 +2,7 @@ import React from "react";
 import {
   useAddFriend,
   useFriendRemoval,
+  usePersonalGroupRetrieval,
   useUserFriendsRetrieval,
   useUsersRetrieval,
 } from "@viewModels";
@@ -10,18 +11,45 @@ import { Box, Button, Modal } from "@mui/material";
 import { Props, modalStyle } from "./types";
 import styles from "./styles.module.scss";
 
-function Friends({ user }: Props) {
-  const { retrieveUserFriends, friends } = useUserFriendsRetrieval();
-  const { retrieveUsers, users } = useUsersRetrieval();
+function Friends({ user, setSelectedGroup }: Props) {
+  const {
+    retrieveUserFriends,
+    friends,
+    isRequestSuccess: isRequestFriendsSuccess,
+    isRequestPending: isRequestFriendsPending,
+    isRequestFailure: isRequestFriendsFailure,
+  } = useUserFriendsRetrieval();
+  const {
+    retrieveUsers,
+    users,
+    isRequestSuccess: isRequestUsersSuccess,
+    isRequestPending,
+    isRequestFailure,
+  } = useUsersRetrieval();
+  const { retrievePersonalGroup, group, isRequestSuccess } =
+    usePersonalGroupRetrieval();
   const { removeFriend } = useFriendRemoval();
   const { addFriend } = useAddFriend();
   const [openFriends, setOpenFriends] = React.useState(false);
   const [openUsers, setOpenUsers] = React.useState(false);
 
   React.useEffect(() => {
-    retrieveUserFriends({ user: user.uuid });
-    retrieveUsers();
+    !isRequestFriendsFailure &&
+      !isRequestFriendsPending &&
+      !isRequestFriendsSuccess &&
+      retrieveUserFriends({ user: user.uuid });
+    !isRequestPending &&
+      !isRequestFailure &&
+      !isRequestUsersSuccess &&
+      retrieveUsers();
   }, []);
+
+  React.useEffect(() => {
+    if (isRequestSuccess) {
+      setSelectedGroup(group);
+      setOpenFriends(false);
+    }
+  }, [isRequestSuccess]);
 
   return (
     <div className={styles.friends}>
@@ -41,6 +69,16 @@ function Friends({ user }: Props) {
                   <p>{friend.name} </p>
                   {friend.isConnected && <div className={styles.connected} />}
                 </div>
+                <button
+                  onClick={() =>
+                    retrievePersonalGroup({
+                      user1: user.uuid,
+                      user2: friend.uuid,
+                    })
+                  }
+                >
+                  message
+                </button>
                 <button onClick={() => removeFriend({ friend: friend })}>
                   remove
                 </button>

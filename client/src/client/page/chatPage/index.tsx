@@ -7,10 +7,13 @@ import { Loader } from "./loader";
 import { Friends } from "./friends";
 import { Props } from "./types";
 import styles from "./styles.module.scss";
+import { Group, Identifiable } from "@dto";
 
 function ChatPage(_: Props) {
   const { retrieveCurrentUser, user, isRequestSuccess } =
     useCurrentUserRetrieval();
+  const [selectedGroup, setSelectedGroup] =
+    React.useState<Identifiable<Group> | null>(null);
 
   React.useEffect(() => {
     retrieveCurrentUser();
@@ -24,8 +27,12 @@ function ChatPage(_: Props) {
             <h2>ChatApp, welcome {user.name}</h2>
             <DisconnectButton />
           </div>
-          <Friends user={user} />
-          <Chat user={user} />
+          <Friends user={user} setSelectedGroup={setSelectedGroup} />
+          <Chat
+            user={user}
+            selectedGroup={selectedGroup}
+            setSelectedGroup={setSelectedGroup}
+          />
         </div>
       ) : (
         <div className={styles.loader}>

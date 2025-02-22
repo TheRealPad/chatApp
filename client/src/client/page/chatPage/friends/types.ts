@@ -1,7 +1,8 @@
-import { Identifiable, User } from "@dto";
+import { Group, Identifiable, User } from "@dto";
 
 interface Props {
   user: Identifiable<User>;
+  setSelectedGroup(selectedGroup: Identifiable<Group>): void;
 }
 
 const modalStyle = {

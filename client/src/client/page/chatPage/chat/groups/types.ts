@@ -1,7 +1,6 @@
-import { Group, Identifiable, User } from "@dto";
+import { Group, Identifiable } from "@dto";
 
 interface Props {
-  user: Identifiable<User>;
   selectedGroup: Identifiable<Group> | null;
   setSelectedGroup(selectedGroup: Identifiable<Group>): void;
 }

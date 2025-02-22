@@ -8,7 +8,8 @@ import {
   addFriend,
   removeFriend,
 } from "@core/friends/retrieveUserFriends";
-import { Identifiable, User } from "@dto";
+import { Group, Identifiable, User } from "@dto";
+import { addNewGroup } from "@core/groups/retrieveGroups";
 
 function chatsSubscriber(
   stompClient: Client,
@@ -77,9 +78,27 @@ function unsubscribeSubscriber(
   });
 }
 
+function addToGroupSubscriber(
+  stompClient: Client,
+  dispatch: Dispatch<UnknownAction>
+) {
+  stompClient.subscribe(`/user/queue/private/addToGroup`, (message) => {
+    const jsonGroup = JSON.parse(message.body);
+    const group: Identifiable<Group> = {
+      name: jsonGroup.name,
+      description: jsonGroup.description,
+      uuid: jsonGroup.uuid,
+      isPersonal: jsonGroup.isPersonal,
+      members: jsonGroup.members,
+    };
+    dispatch(addNewGroup(group));
+  });
+}
+
 export {
   chatsSubscriber,
   usersSubscriber,
   subscribeSubscriber,
   unsubscribeSubscriber,
+  addToGroupSubscriber,
 };

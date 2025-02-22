@@ -4,3 +4,4 @@ export * from "./user";
 export * from "./id";
 export * from "./identifiable";
 export * from "./chat";
+export * from "./group";
