@@ -7,6 +7,7 @@ import org.pad.api.repository.ChatRepository
 import org.pad.api.repository.GroupRepository
 import org.pad.api.service.auth.UserContext
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.*
 
 @Service
@@ -28,7 +29,7 @@ class ChatService(
         chat.sender = user
         val group = chat.group
         for (member in group?.members.orEmpty()) {
-            webSocketService.notifyUser(member, "/private/chat", chat.toJson())
+            webSocketService.notifyUser(member, "/queue/private/chat", chat.toJson())
         }
         return chatRepository.save(chat)
     }

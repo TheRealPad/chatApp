@@ -5,6 +5,7 @@ import { getGroups } from "@services/core/getGroups.ts";
 import { RetrieveGroupsState } from "./types.ts";
 import { getPersonalGroup } from "@services/core/getPersonalGroup.ts";
 import { deleteGroup } from "@services/core/deleteGroup.ts";
+import { sendChat } from "@services/core/sendChat.ts";
 
 function retrieveGroupsStateHandler() {
   return (builder: ActionReducerMapBuilder<RetrieveGroupsState>) => {
@@ -44,6 +45,17 @@ function retrieveGroupsStateHandler() {
         );
         if (!isGroupPresent) {
           state.groups = [...state.groups, { ...payload }];
+        }
+      })
+      .addCase(sendChat.fulfilled, (state, { payload }) => {
+        const selectedGroup = current(
+          state.groups.find((group) => group.uuid === payload.group.uuid)
+        );
+        if (selectedGroup) {
+          state.groups = state.groups.filter(
+            (group) => group.uuid !== payload.group.uuid
+          );
+          state.groups = [selectedGroup, ...state.groups];
         }
       });
   };

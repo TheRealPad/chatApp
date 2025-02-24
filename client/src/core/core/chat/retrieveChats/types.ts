@@ -1,9 +1,18 @@
-import { Chat, Request } from "@dto";
+import { Chat, Group, Identifiable, Request } from "@dto";
 
-interface RetrieveChatsState {
-  chats: Chat[];
+interface GroupChat {
+  chats: Identifiable<Chat>[];
   error: string | null;
   request: Request;
+  group: Identifiable<Group>;
 }
 
-export { RetrieveChatsState };
+interface RetrieveChatsState {
+  groups: GroupChat[];
+}
+
+interface RetrieveChatsRequest {
+  group: Identifiable<Group>;
+}
+
+export { RetrieveChatsState, RetrieveChatsRequest };

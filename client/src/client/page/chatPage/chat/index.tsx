@@ -13,7 +13,6 @@ import {
 import {
   connectionPublisher,
   disconnectionPublisher,
-  sendChatPublisher,
 } from "@component/webSocket/publishers.ts";
 import { Groups } from "./groups";
 import { Conversation } from "./conversation";
@@ -62,22 +61,6 @@ function Chat({ user, selectedGroup, setSelectedGroup }: Props) {
     };
   }, []);
 
-  const sendMessage = (message: string) => {
-    if (
-      stompClientRef.current &&
-      message.trim() !== "" &&
-      user.name.trim() !== ""
-    ) {
-      const chatMessage = {
-        sender: user.name,
-        content: message,
-        timestamp: new Date().getTime(),
-      };
-
-      sendChatPublisher(stompClientRef.current, chatMessage);
-    }
-  };
-
   return (
     <div className={styles.chat}>
       <div className={styles.leftBox}>
@@ -87,11 +70,7 @@ function Chat({ user, selectedGroup, setSelectedGroup }: Props) {
         />
       </div>
       <div className={styles.rightBox}>
-        <Conversation
-          user={user}
-          selectedGroup={selectedGroup}
-          sendMessage={sendMessage}
-        />
+        <Conversation user={user} selectedGroup={selectedGroup} />
       </div>
     </div>
   );

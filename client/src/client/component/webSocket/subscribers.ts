@@ -1,4 +1,3 @@
-import { addMessage } from "@core/chat/retrieveChats";
 import { Client } from "@stomp/stompjs";
 import { Dispatch } from "react";
 import { UnknownAction } from "@reduxjs/toolkit";
@@ -8,15 +7,34 @@ import {
   addFriend,
   removeFriend,
 } from "@core/friends/retrieveUserFriends";
-import { Group, Identifiable, User } from "@dto";
-import { addNewGroup, deleteGroup } from "@core/groups/retrieveGroups";
+import { Chat, Group, Id, Identifiable, User } from "@dto";
+import {
+  addNewGroup,
+  deleteGroup,
+  updateGroupOrder,
+} from "@core/groups/retrieveGroups";
+import { getChat } from "@core/chat/retrieveChats";
 
 function chatsSubscriber(
   stompClient: Client,
   dispatch: Dispatch<UnknownAction>
 ) {
-  stompClient.subscribe("/topic/messages", (message) => {
-    dispatch(addMessage(JSON.parse(message.body)));
+  stompClient.subscribe("/user/queue/private/chat", (message) => {
+    const jsonChat = JSON.parse(message.body);
+    const chat: Identifiable<Chat> & { group: Id } = {
+      uuid: jsonChat.uuid,
+      content: jsonChat.content,
+      timestamp: new Date(jsonChat.createdDate).getTime(),
+      sender: {
+        name: jsonChat.sender.username,
+        role: jsonChat.sender.role,
+        isConnected: false,
+        uuid: jsonChat.sender.uuid,
+      },
+      group: jsonChat.group.uuid,
+    };
+    dispatch(getChat(chat));
+    dispatch(updateGroupOrder(jsonChat.group));
   });
 }
 

@@ -1,21 +1,21 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-import { HttpClient } from "../types/httpClient";
+import { HttpClient, HttpMethods } from "../types/httpClient";
 import { ChatUseCases } from "@core/chat/types.ts";
+import { RetrieveChatsRequest } from "@core/chat/retrieveChats/types.ts";
 
 export const getChats = createAsyncThunk(
   ChatUseCases.retrieveChats,
-  async ({ apiClient }: { apiClient: HttpClient }, thunkAPI): Promise<any> => {
-    try {
-      console.log(apiClient);
-      const data = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(["ok"]);
-        }, 1000);
-      });
-      return data;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
+  async ({
+    apiClient,
+    request,
+  }: {
+    apiClient: HttpClient;
+    request: RetrieveChatsRequest;
+  }): Promise<any> => {
+    return apiClient.sendHttpRequest({
+      endpoint: `/groupChat/${request.group.uuid}`,
+      method: HttpMethods.GET,
+    });
   }
 );

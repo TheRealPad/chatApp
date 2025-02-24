@@ -1,11 +1,14 @@
+import { Identifiable } from "@/src/core/dto/identifiable.ts";
+import { user, User } from "@/src/core/dto/user.ts";
+
 type Chat = {
-  sender: string;
+  sender: Identifiable<User>;
   content: string;
   timestamp: number;
 };
 
 const chat: Chat = {
-  sender: "",
+  sender: { ...user, uuid: "" },
   content: "",
   timestamp: 0,
 };

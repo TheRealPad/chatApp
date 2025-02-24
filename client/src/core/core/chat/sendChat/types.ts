@@ -1,4 +1,4 @@
-import { Chat, Request } from "@dto";
+import { Chat, Group, Identifiable, Request } from "@dto";
 
 interface SendChatState {
   error: string | null;
@@ -7,6 +7,7 @@ interface SendChatState {
 
 interface SendChatRequest {
   chat: Chat;
+  group: Identifiable<Group>;
 }
 
 export { SendChatState, SendChatRequest };

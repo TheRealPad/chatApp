@@ -18,10 +18,22 @@ export const retrieveGroupsSlice = createSlice({
         (group) => group.uuid !== payload.uuid
       );
     },
+    updateGroupOrder: (state, { payload }) => {
+      const selectedGroup = current(state.groups).find(
+        (group) => group.uuid === payload.uuid
+      );
+      if (selectedGroup) {
+        state.groups = state.groups.filter(
+          (group) => group.uuid !== payload.uuid
+        );
+        state.groups = [selectedGroup, ...state.groups];
+      }
+    },
   },
   extraReducers: retrieveGroupsStateHandler(),
 });
 
-export const { addNewGroup, deleteGroup } = retrieveGroupsSlice.actions;
+export const { addNewGroup, deleteGroup, updateGroupOrder } =
+  retrieveGroupsSlice.actions;
 
 export default retrieveGroupsSlice.reducer;

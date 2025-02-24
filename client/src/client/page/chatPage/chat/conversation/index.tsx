@@ -1,11 +1,15 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-import { useChatsRetrieval, useGroupRemoval } from "@viewModels";
+import { useChatSender, useChatsRetrieval, useGroupRemoval } from "@viewModels";
+import { group } from "@dto";
 import { Props } from "./types";
 import styles from "./styles.module.scss";
 
-function Conversation({ user, selectedGroup, sendMessage }: Props) {
-  const { chats } = useChatsRetrieval();
+function Conversation({ user, selectedGroup }: Props) {
+  const { chats, retrieveChats } = useChatsRetrieval({
+    group: selectedGroup ?? { ...group, uuid: "" },
+  });
+  const { sendChat } = useChatSender();
   const { deleteGroup } = useGroupRemoval();
   const [message, setMessage] = useState("");
   const groupName = !selectedGroup
@@ -15,10 +19,14 @@ function Conversation({ user, selectedGroup, sendMessage }: Props) {
       user.name + " (you)"
     : selectedGroup.name;
 
+  React.useEffect(() => {
+    selectedGroup && retrieveChats({ group: selectedGroup });
+  }, [selectedGroup]);
+
   return (
     <div className={styles.conversation}>
       <div className={styles.header}>
-        <h2>{selectedGroup ? groupName : "No group selected"}</h2>
+        <h2>{selectedGroup ? groupName : "No conversation selected"}</h2>
         {selectedGroup && (
           <div>
             <button onClick={() => deleteGroup({ group: selectedGroup })}>
@@ -30,31 +38,45 @@ function Conversation({ user, selectedGroup, sendMessage }: Props) {
       <div className={styles.chats}>
         {chats.map((chat, index) => (
           <div key={index}>
-            <strong>{chat.sender}</strong>: {chat.content}{" "}
-            <i>({new Date(chat.timestamp).toLocaleTimeString()})</i>
+            <strong>{chat.sender.name}</strong>: {chat.content}{" "}
+            <i>({new Date(chat.timestamp).toLocaleString()})</i>
           </div>
         ))}
       </div>
-      <form
-        className={styles.textInput}
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
-        <p>
-          {user.name} {">"}
-        </p>
-        <input
-          className={styles.input}
-          type="text"
-          placeholder="Type a message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <button type={"submit"} onClick={() => sendMessage(message)}>
-          Send Send
-        </button>
-      </form>
+      {selectedGroup && (
+        <form
+          className={styles.textInput}
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <p>
+            {user.name} {">"}
+          </p>
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="Type a message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button
+            type={"submit"}
+            onClick={() =>
+              sendChat({
+                chat: {
+                  sender: user,
+                  content: message,
+                  timestamp: new Date().getTime(),
+                },
+                group: selectedGroup ?? { ...group, uuid: "" },
+              })
+            }
+          >
+            Send
+          </button>
+        </form>
+      )}
     </div>
   );
 }

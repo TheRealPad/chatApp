@@ -10,6 +10,7 @@ import org.pad.api.service.auth.UserContext
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import java.time.Instant
 import java.util.UUID
 
 @Service
@@ -17,7 +18,8 @@ class GroupService(
     private val groupRepository: GroupRepository,
     private val userRepository: UserRepository,
     private val webSocketService: WebSocketService,
-    private val userContext: UserContext
+    private val userContext: UserContext,
+    private val chatService: ChatService
 ) {
 
     fun addUserToGroup(groupId: UUID, userId: UUID): List<User> {
@@ -54,7 +56,12 @@ class GroupService(
 
     fun getUsersGroup(): List<Group> {
         val user = userContext.getCurrentUser() ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
-        return groupRepository.findByUser(user)
+        val groups = groupRepository.findByUser(user)
+        val sortedGroups = groups.sortedByDescending { group ->
+            val chats = chatService.getGroupChats(group.uuid)
+            chats.firstOrNull()?.lastModified?.toInstant() ?: Instant.MIN
+        }
+        return sortedGroups
     }
 
     fun getPersonalConversation(userId1: UUID, userId2: UUID): GroupDto {
