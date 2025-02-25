@@ -1,5 +1,6 @@
 export * from "./chat/sendChat";
 export * from "./chat/retrieveChats";
+export * from "./chat/isTyping";
 
 export * from "./authentication/login";
 export * from "./authentication/register";

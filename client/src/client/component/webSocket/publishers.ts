@@ -22,4 +22,16 @@ function sendChatPublisher(stompClient: Client, chatMessage: Chat) {
   });
 }
 
-export { connectionPublisher, disconnectionPublisher, sendChatPublisher };
+function isTypingPublisher(stompClient: Client, request: any) {
+  stompClient.publish({
+    destination: "/app/isTyping",
+    body: JSON.stringify(request),
+  });
+}
+
+export {
+  connectionPublisher,
+  disconnectionPublisher,
+  sendChatPublisher,
+  isTypingPublisher,
+};

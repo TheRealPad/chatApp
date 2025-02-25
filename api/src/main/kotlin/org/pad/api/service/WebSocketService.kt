@@ -1,6 +1,9 @@
 package org.pad.api.service
 
+import jakarta.transaction.Transactional
 import org.pad.api.domain.auth.User
+import org.pad.api.domain.dto.IsTypingDto
+import org.pad.api.repository.GroupRepository
 import org.pad.api.repository.auth.UserRepository
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.messaging.simp.SimpMessageType
@@ -11,7 +14,8 @@ import java.util.*
 @Service
 class WebSocketService(
     private val messagingTemplate: SimpMessagingTemplate,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val groupRepository: GroupRepository,
 ) {
 
     private val connectedUsers = mutableSetOf<User>()
@@ -46,5 +50,16 @@ class WebSocketService(
         connectedUsers.remove(removedUser)
         userToSessionMap.remove(removedUser?.uuid.toString())
         return connectedUsers
+    }
+
+    @Transactional
+    fun notifyTyping(request: IsTypingDto) {
+        val group = groupRepository.findById(UUID.fromString(request.group))
+        val groupMembers = group.get().members
+        for (groupMember in groupMembers) {
+            if (groupMember.uuid.toString() != request.user) {
+                notifyUser(groupMember, "/queue/private/isTyping", request.toJson())
+            }
+        }
     }
 }

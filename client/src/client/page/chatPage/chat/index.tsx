@@ -6,6 +6,7 @@ import {
   addToGroupSubscriber,
   chatsSubscriber,
   groupDeletionSubscriber,
+  isTypingSubscriber,
   subscribeSubscriber,
   unsubscribeSubscriber,
   usersSubscriber,
@@ -13,7 +14,9 @@ import {
 import {
   connectionPublisher,
   disconnectionPublisher,
+  isTypingPublisher,
 } from "@component/webSocket/publishers.ts";
+import { Group, Identifiable, User } from "@dto";
 import { Groups } from "./groups";
 import { Conversation } from "./conversation";
 import { Props } from "./types";
@@ -37,6 +40,7 @@ function Chat({ user, selectedGroup, setSelectedGroup }: Props) {
         chatsSubscriber(stompClient, dispatch);
         groupDeletionSubscriber(stompClient, dispatch);
         addToGroupSubscriber(stompClient, dispatch);
+        isTypingSubscriber(stompClient, dispatch);
         connectionPublisher(stompClient, uniqueIdRef.current);
       },
     });
@@ -61,6 +65,20 @@ function Chat({ user, selectedGroup, setSelectedGroup }: Props) {
     };
   }, []);
 
+  const notifyTyping = (
+    user: Identifiable<User>,
+    group: Identifiable<Group>,
+    isTyping: boolean
+  ) => {
+    if (stompClientRef.current) {
+      isTypingPublisher(stompClientRef.current, {
+        user: user.uuid,
+        group: group.uuid,
+        isTyping: isTyping,
+      });
+    }
+  };
+
   return (
     <div className={styles.chat}>
       <div className={styles.leftBox}>
@@ -70,7 +88,11 @@ function Chat({ user, selectedGroup, setSelectedGroup }: Props) {
         />
       </div>
       <div className={styles.rightBox}>
-        <Conversation user={user} selectedGroup={selectedGroup} />
+        <Conversation
+          user={user}
+          selectedGroup={selectedGroup}
+          notifyTyping={notifyTyping}
+        />
       </div>
     </div>
   );

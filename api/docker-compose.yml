@@ -11,6 +11,11 @@ services:
       - "3307:3306"
     networks:
       - back-net
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   app:
     build: .
     ports:
@@ -18,7 +23,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev.production
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 networks:
   back-net:

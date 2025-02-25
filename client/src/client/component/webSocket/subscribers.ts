@@ -1,6 +1,7 @@
 import { Client } from "@stomp/stompjs";
 import { Dispatch } from "react";
 import { UnknownAction } from "@reduxjs/toolkit";
+
 import { getConnectedUsers } from "@core/user/retrieveUsers";
 import {
   getConnectedFriends,
@@ -14,6 +15,7 @@ import {
   updateGroupOrder,
 } from "@core/groups/retrieveGroups";
 import { getChat } from "@core/chat/retrieveChats";
+import { usersTyping } from "@core/chat/isTyping";
 
 function chatsSubscriber(
   stompClient: Client,
@@ -130,6 +132,15 @@ function groupDeletionSubscriber(
   });
 }
 
+function isTypingSubscriber(
+  stompClient: Client,
+  dispatch: Dispatch<UnknownAction>
+) {
+  stompClient.subscribe(`/user/queue/private/isTyping`, (message) => {
+    dispatch(usersTyping(JSON.parse(message.body)));
+  });
+}
+
 export {
   chatsSubscriber,
   usersSubscriber,
@@ -137,4 +148,5 @@ export {
   unsubscribeSubscriber,
   addToGroupSubscriber,
   groupDeletionSubscriber,
+  isTypingSubscriber,
 };

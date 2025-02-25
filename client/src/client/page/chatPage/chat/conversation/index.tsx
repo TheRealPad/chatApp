@@ -1,16 +1,31 @@
 import React, { useState } from "react";
 
-import { useChatSender, useChatsRetrieval, useGroupRemoval } from "@viewModels";
+import {
+  useChatSender,
+  useChatsRetrieval,
+  useGroupRemoval,
+  useIsTypingRetrieval,
+} from "@viewModels";
 import { group } from "@dto";
 import { Props } from "./types";
 import styles from "./styles.module.scss";
 
-function Conversation({ user, selectedGroup }: Props) {
+function Conversation({ user, selectedGroup, notifyTyping }: Props) {
   const { chats, retrieveChats } = useChatsRetrieval({
     group: selectedGroup ?? { ...group, uuid: "" },
   });
   const { sendChat } = useChatSender();
   const { deleteGroup } = useGroupRemoval();
+  const { users } = useIsTypingRetrieval({
+    group: selectedGroup ?? { ...group, uuid: "" },
+  });
+  const usersTyping = selectedGroup
+    ? users
+        .map(
+          (u) => selectedGroup.members.find((member) => member.uuid === u)?.name
+        )
+        .join(",")
+    : "";
   const [message, setMessage] = useState("");
   const groupName = !selectedGroup
     ? ""
@@ -44,38 +59,46 @@ function Conversation({ user, selectedGroup }: Props) {
         ))}
       </div>
       {selectedGroup && (
-        <form
-          className={styles.textInput}
-          onSubmit={(e) => {
-            e.preventDefault();
-          }}
-        >
-          <p>
-            {user.name} {">"}
-          </p>
-          <input
-            className={styles.input}
-            type="text"
-            placeholder="Type a message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button
-            type={"submit"}
-            onClick={() =>
-              sendChat({
-                chat: {
-                  sender: user,
-                  content: message,
-                  timestamp: new Date().getTime(),
-                },
-                group: selectedGroup ?? { ...group, uuid: "" },
-              })
-            }
+        <div>
+          {usersTyping.length > 0 && <p>{usersTyping} is typing...</p>}
+          <form
+            className={styles.textInput}
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
           >
-            Send
-          </button>
-        </form>
+            <p>
+              {user.name} {">"}
+            </p>
+            <input
+              className={styles.input}
+              type="text"
+              placeholder="Type a message"
+              value={message}
+              onFocus={() => notifyTyping(user, selectedGroup, true)}
+              onChange={(e) => {
+                setMessage(e.target.value);
+                notifyTyping(user, selectedGroup, true);
+              }}
+              onBlur={() => notifyTyping(user, selectedGroup, false)}
+            />
+            <button
+              type={"submit"}
+              onClick={() =>
+                sendChat({
+                  chat: {
+                    sender: user,
+                    content: message,
+                    timestamp: new Date().getTime(),
+                  },
+                  group: selectedGroup ?? { ...group, uuid: "" },
+                })
+              }
+            >
+              Send
+            </button>
+          </form>
+        </div>
       )}
     </div>
   );

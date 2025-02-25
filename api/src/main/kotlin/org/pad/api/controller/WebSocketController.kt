@@ -1,6 +1,7 @@
 package org.pad.api.controller
 
 import org.pad.api.domain.auth.User
+import org.pad.api.domain.dto.IsTypingDto
 import org.pad.api.service.WebSocketService
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
@@ -29,6 +30,11 @@ class WebSocketController(
     @SendTo("/topic/users")
     fun disconnect(user: String, headerAccessor: SimpMessageHeaderAccessor): Set<User> {
         return webSocketService.disconnect(user, headerAccessor)
+    }
+
+    @MessageMapping("/isTyping")
+    fun isWriting(request: IsTypingDto) {
+        webSocketService.notifyTyping(request)
     }
 
 }
