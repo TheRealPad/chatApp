@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
-import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import lombok.Builder
 import lombok.Getter
 import lombok.Setter
 import lombok.ToString

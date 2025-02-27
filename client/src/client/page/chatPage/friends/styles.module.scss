@@ -1,9 +1,11 @@
 .friends {
   display: inline-flex;
-  width: 50%;
+  width: 20%;
   align-items: center;
-  justify-content: start;
+  justify-content: space-between;
   margin-left: 1rem;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .box {
@@ -21,13 +23,43 @@
 .name {
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  width: 5rem;
+  justify-content: start;
+  width: 35%;
+  text-transform: capitalize;
+  gap: 1rem;
+
+  & > p {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 50%;
+  }
 }
 
 .connected {
-  height: 1rem;
-  width: 1rem;
+  height: 0;
+  width: 0;
+  min-height: 1rem;
+  min-width: 1rem;
   background: green;
   border-radius: 50%;
+}
+
+.buttons {
+  display: inline-flex;
+  gap: 1rem;
+}
+
+.addButton {
+  background-color: green;
+}
+
+.removeButton {
+  background-color: red;
+}
+
+.userIcon {
+  height: 0;
+  width: 0;
+  min-height: 2rem;
+  min-width: 2rem;
 }

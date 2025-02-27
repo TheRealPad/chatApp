@@ -110,6 +110,7 @@ function addToGroupSubscriber(
       uuid: jsonGroup.uuid,
       isPersonal: jsonGroup.isPersonal,
       members: jsonGroup.members,
+      unseenMessages: 0,
     };
     dispatch(addNewGroup(group));
   });
@@ -127,6 +128,7 @@ function groupDeletionSubscriber(
       uuid: jsonGroup.uuid,
       isPersonal: jsonGroup.isPersonal,
       members: jsonGroup.members,
+      unseenMessages: 0,
     };
     dispatch(deleteGroup(group));
   });

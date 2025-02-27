@@ -55,10 +55,13 @@ class GroupService(
     }
 
     fun getUsersGroup(): List<Group> {
-        val user = userContext.getCurrentUser() ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        val user = userContext.getCurrentUser()
         val groups = groupRepository.findByUser(user)
+        groups.forEach { group ->
+            group.unseen = chatService.getNumberUnseenUnseenChats(group)
+        }
         val sortedGroups = groups.sortedByDescending { group ->
-            val chats = chatService.getGroupChats(group.uuid)
+            val chats = chatService.getGroupChats(group.uuid, false)
             chats.firstOrNull()?.lastModified?.toInstant() ?: Instant.MIN
         }
         return sortedGroups

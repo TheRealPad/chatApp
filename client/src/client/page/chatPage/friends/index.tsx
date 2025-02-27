@@ -6,10 +6,11 @@ import {
   useUserFriendsRetrieval,
   useUsersRetrieval,
 } from "@viewModels";
-import { Box, Button, Modal } from "@mui/material";
+import { Box, Modal } from "@mui/material";
 
 import { Props, modalStyle } from "./types";
 import styles from "./styles.module.scss";
+import { UserIcon } from "@common/userIcon";
 
 function Friends({ user, setSelectedGroup }: Props) {
   const {
@@ -53,8 +54,8 @@ function Friends({ user, setSelectedGroup }: Props) {
 
   return (
     <div className={styles.friends}>
-      <Button onClick={() => setOpenFriends(!openFriends)}>See Friends</Button>
-      <Button onClick={() => setOpenUsers(!openUsers)}>See Users</Button>
+      <button onClick={() => setOpenFriends(!openFriends)}>See Friends</button>
+      <button onClick={() => setOpenUsers(!openUsers)}>See Users</button>
       <Modal
         open={openFriends}
         onClose={() => setOpenFriends(!openFriends)}
@@ -66,22 +67,30 @@ function Friends({ user, setSelectedGroup }: Props) {
             {friends.map((friend, index) => (
               <div className={styles.user} key={index}>
                 <div className={styles.name}>
+                  <div className={styles.userIcon}>
+                    <UserIcon user={friend} />
+                  </div>
                   <p>{friend.name} </p>
                   {friend.isConnected && <div className={styles.connected} />}
                 </div>
-                <button
-                  onClick={() =>
-                    retrievePersonalGroup({
-                      user1: user.uuid,
-                      user2: friend.uuid,
-                    })
-                  }
-                >
-                  message
-                </button>
-                <button onClick={() => removeFriend({ friend: friend })}>
-                  remove
-                </button>
+                <div className={styles.buttons}>
+                  <button
+                    onClick={() =>
+                      retrievePersonalGroup({
+                        user1: user.uuid,
+                        user2: friend.uuid,
+                      })
+                    }
+                  >
+                    message
+                  </button>
+                  <button
+                    className={styles.removeButton}
+                    onClick={() => removeFriend({ friend: friend })}
+                  >
+                    remove
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -98,6 +107,9 @@ function Friends({ user, setSelectedGroup }: Props) {
             {users.map((u, index) => (
               <div className={styles.user} key={index}>
                 <div className={styles.name}>
+                  <div className={styles.userIcon}>
+                    <UserIcon user={u} />
+                  </div>
                   <p>{u.name} </p>
                   {u.isConnected ||
                     (u.uuid === user.uuid && (
@@ -106,7 +118,10 @@ function Friends({ user, setSelectedGroup }: Props) {
                 </div>
                 {user.uuid !== u.uuid &&
                   !friends.find((p) => p.uuid === u.uuid) && (
-                    <button onClick={() => addFriend({ friend: u })}>
+                    <button
+                      className={styles.addButton}
+                      onClick={() => addFriend({ friend: u })}
+                    >
                       add
                     </button>
                   )}

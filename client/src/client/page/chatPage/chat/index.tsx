@@ -15,6 +15,7 @@ import {
   connectionPublisher,
   disconnectionPublisher,
   isTypingPublisher,
+  openMessagePublisher,
 } from "@component/webSocket/publishers.ts";
 import { Group, Identifiable, User } from "@dto";
 import { Groups } from "./groups";
@@ -79,12 +80,22 @@ function Chat({ user, selectedGroup, setSelectedGroup }: Props) {
     }
   };
 
+  const markMessageAsRead = (group: Identifiable<Group>) => {
+    if (stompClientRef.current) {
+      openMessagePublisher(stompClientRef.current, {
+        user: user.uuid,
+        group: group.uuid,
+      });
+    }
+  };
+
   return (
     <div className={styles.chat}>
       <div className={styles.leftBox}>
         <Groups
           selectedGroup={selectedGroup}
           setSelectedGroup={setSelectedGroup}
+          markMessageAsRead={markMessageAsRead}
         />
       </div>
       <div className={styles.rightBox}>

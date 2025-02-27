@@ -7,6 +7,7 @@ import {
   useIsTypingRetrieval,
 } from "@viewModels";
 import { group } from "@dto";
+import { Chat } from "./chat";
 import { Props } from "./types";
 import styles from "./styles.module.scss";
 
@@ -34,6 +35,15 @@ function Conversation({ user, selectedGroup, notifyTyping }: Props) {
       user.name + " (you)"
     : selectedGroup.name;
 
+  const chatContainerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [chats]);
+
   React.useEffect(() => {
     selectedGroup && retrieveChats({ group: selectedGroup });
   }, [selectedGroup]);
@@ -44,32 +54,33 @@ function Conversation({ user, selectedGroup, notifyTyping }: Props) {
         <h2>{selectedGroup ? groupName : "No conversation selected"}</h2>
         {selectedGroup && (
           <div>
-            <button onClick={() => deleteGroup({ group: selectedGroup })}>
+            <button
+              className={styles.deleteButton}
+              onClick={() => deleteGroup({ group: selectedGroup })}
+            >
               delete
             </button>
           </div>
         )}
       </div>
-      <div className={styles.chats}>
+      <div className={styles.chats} ref={chatContainerRef}>
         {chats.map((chat, index) => (
           <div key={index}>
-            <strong>{chat.sender.name}</strong>: {chat.content}{" "}
-            <i>({new Date(chat.timestamp).toLocaleString()})</i>
+            <Chat chat={chat} />
           </div>
         ))}
       </div>
       {selectedGroup && (
         <div>
-          {usersTyping.length > 0 && <p>{usersTyping} is typing...</p>}
+          {usersTyping.length > 0 && (
+            <p className={styles.isTyping}>{usersTyping} is typing...</p>
+          )}
           <form
             className={styles.textInput}
             onSubmit={(e) => {
               e.preventDefault();
             }}
           >
-            <p>
-              {user.name} {">"}
-            </p>
             <input
               className={styles.input}
               type="text"
@@ -84,7 +95,7 @@ function Conversation({ user, selectedGroup, notifyTyping }: Props) {
             />
             <button
               type={"submit"}
-              onClick={() =>
+              onClick={() => {
                 sendChat({
                   chat: {
                     sender: user,
@@ -92,8 +103,9 @@ function Conversation({ user, selectedGroup, notifyTyping }: Props) {
                     timestamp: new Date().getTime(),
                   },
                   group: selectedGroup ?? { ...group, uuid: "" },
-                })
-              }
+                });
+                setMessage("");
+              }}
             >
               Send
             </button>

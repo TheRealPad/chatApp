@@ -26,7 +26,13 @@ export const retrieveGroupsSlice = createSlice({
         state.groups = state.groups.filter(
           (group) => group.uuid !== payload.uuid
         );
-        state.groups = [selectedGroup, ...state.groups];
+        state.groups = [
+          {
+            ...selectedGroup,
+            unseenMessages: selectedGroup.unseenMessages + 1,
+          },
+          ...state.groups,
+        ];
       }
     },
   },

@@ -29,9 +29,17 @@ function isTypingPublisher(stompClient: Client, request: any) {
   });
 }
 
+function openMessagePublisher(stompClient: Client, request: any) {
+  stompClient.publish({
+    destination: "/app/openMessages",
+    body: JSON.stringify(request),
+  });
+}
+
 export {
   connectionPublisher,
   disconnectionPublisher,
   sendChatPublisher,
   isTypingPublisher,
+  openMessagePublisher,
 };

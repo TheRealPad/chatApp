@@ -3,6 +3,10 @@
   width: 100%;
 }
 
+.username {
+  color: var(--color-primary);
+}
+
 .loader {
   height: 100%;
   display: flex;
@@ -20,4 +24,5 @@
 
 .content {
   height: 100%;
+  width: 100%;
 }

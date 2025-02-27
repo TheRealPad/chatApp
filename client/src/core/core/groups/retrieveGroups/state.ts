@@ -21,6 +21,7 @@ function retrieveGroupsStateHandler() {
         state.request.isRequestSuccess = true;
         state.groups = payload.map((group: any) => ({
           ...group,
+          unseenMessages: group.unseen,
           members: group.members.map((member: any) => ({
             name: member.username,
             role: member.role,

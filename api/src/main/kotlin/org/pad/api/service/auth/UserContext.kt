@@ -45,12 +45,14 @@ class UserContext {
         }
     }
 
-    fun getCurrentUser(): User? {
+    fun getCurrentUser(): User {
         val authentication = SecurityContextHolder.getContext().authentication
-        return if (authentication != null && authentication.isAuthenticated && authentication.principal is UserDetails) {
-            return userRepository.findByUsername((authentication.principal as UserDetails).username)
+        if (authentication != null && authentication.isAuthenticated && authentication.principal is UserDetails) {
+            val user = userRepository.findByUsername((authentication.principal as UserDetails).username)
+                ?: throw Exception("User context not found")
+            return user
         } else {
-            null
+            throw Exception("User context not found")
         }
     }
 

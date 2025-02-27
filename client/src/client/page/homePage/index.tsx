@@ -29,22 +29,27 @@ function HomePage(_: Props) {
       </div>
       <div className={styles.form}>
         <div className={styles.inputs}>
-          <input
-            className={styles.input}
-            placeholder={"username"}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            className={styles.input}
-            type="password"
-            placeholder={"password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className={styles.block}>
+            <p>username</p>
+            <input
+              className={styles.input}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+          <div className={styles.block}>
+            <p>password</p>
+            <input
+              className={styles.input}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
         </div>
         <div className={styles.buttons}>
           <button
+            className={styles.button}
             onClick={() =>
               username && password && login({ username, password })
             }
@@ -52,6 +57,7 @@ function HomePage(_: Props) {
             login
           </button>
           <button
+            className={styles.button}
             onClick={() =>
               username && password && register({ username, password })
             }

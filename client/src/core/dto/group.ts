@@ -6,6 +6,7 @@ type Group = {
   description: string;
   isPersonal: boolean;
   members: Identifiable<User>[];
+  unseenMessages: number;
 };
 
 const group: Group = {
@@ -13,6 +14,7 @@ const group: Group = {
   description: "",
   isPersonal: false,
   members: [],
+  unseenMessages: 0,
 };
 
 export { Group, group };

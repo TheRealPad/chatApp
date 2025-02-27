@@ -1,0 +1,31 @@
+.chat {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: start;
+  gap: 1rem;
+}
+
+.username {
+  font-size: 1.2rem;
+  text-transform: capitalize;
+  font-weight: bolder;
+}
+
+.date {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.body {
+  margin: 0 0 0 3rem;
+}
+
+.userIcon {
+  height: 2rem;
+  width: 2rem;
+}

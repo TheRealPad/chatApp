@@ -3,19 +3,25 @@
   overflow: auto;
   display: flex;
   flex-direction: column;
-
-  & > :not(:last-child) {
-    border-bottom: 0.5px solid black;
-  }
+  background-color: #2c2c30;
+  gap: 4px;
 }
 
 .group {
   padding-left: 1rem;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 
   &:hover {
-    background-color: rgba(211, 211, 211, 0.2);
+    background-color: rgba(211, 211, 211, 0.1);
     transition: background-color 0.3s;
+
+    & .deleteButton {
+      visibility: visible;
+    }
   }
 }
 
@@ -24,10 +30,80 @@
 }
 
 .selected {
-  color: red;
+  background-color: rgba(211, 211, 211, 0.1);
+  transition: background-color 0.3s;
+
+  & .deleteButton {
+    visibility: visible;
+  }
 }
 
-.tile {
+.title {
+  max-width: 8rem;
   text-overflow: ellipsis;
   overflow: hidden;
+  text-transform: capitalize;
+}
+
+.start {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon {
+  height: 1rem;
+  width: 1rem;
+  fill: rgba(211, 211, 211, 0.5);
+}
+
+.deleteButton {
+  margin-right: 2rem;
+  display: flex;
+  visibility: hidden;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    & .icon {
+      fill: white;
+    }
+  }
+}
+
+.unseenMessages {
+  position: relative;
+  color: white;
+  background-color: red;
+  border-radius: 100px;
+  height: 1rem;
+  width: 1rem;
+  visibility: hidden;
+  border: 1px solid #35393f;
+
+  & p {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bolder;
+  }
+}
+
+.visible {
+  visibility: visible;
+}
+
+.profileIcon {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+
+  & .unseenMessages {
+    position: absolute;
+    bottom: -15%;
+    right: -15%;
+  }
 }

@@ -29,3 +29,10 @@ Spring boot + Kotlin + MySQL
 ## Frontend
 
 React + Typescript + Redux + Websocket
+
+## In App screenshots
+
+![login page](public/loginPage.png "Login page")
+![chat page](public/chatPage.png "Chat page")
+![conversation page](public/conversationPage.png "Conversation page")
+![phone screen](public/phoneScreen.png "Phone screen")

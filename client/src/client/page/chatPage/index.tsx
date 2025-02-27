@@ -24,7 +24,10 @@ function ChatPage(_: Props) {
       {isRequestSuccess ? (
         <div className={styles.content}>
           <div className={styles.header}>
-            <h2>ChatApp, welcome {user.name}</h2>
+            <h2>
+              ChatApp, welcome{" "}
+              <span className={styles.username}>{user.name}</span>
+            </h2>
             <DisconnectButton />
           </div>
           <Friends user={user} setSelectedGroup={setSelectedGroup} />
